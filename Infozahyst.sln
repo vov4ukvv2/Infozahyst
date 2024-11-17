@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.11.35327.3
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Infozahyst", "Infozahyst\Infozahyst.csproj", "{B09C8A21-52B8-4191-9C6A-6291F66AF7D1}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "InfozahystTest", "InfozahystTest\InfozahystTest.csproj", "{1BD4941C-632D-4319-853A-74D14C5149FA}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{B09C8A21-52B8-4191-9C6A-6291F66AF7D1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B09C8A21-52B8-4191-9C6A-6291F66AF7D1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B09C8A21-52B8-4191-9C6A-6291F66AF7D1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B09C8A21-52B8-4191-9C6A-6291F66AF7D1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1BD4941C-632D-4319-853A-74D14C5149FA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1BD4941C-632D-4319-853A-74D14C5149FA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1BD4941C-632D-4319-853A-74D14C5149FA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1BD4941C-632D-4319-853A-74D14C5149FA}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {F2824809-4819-4313-8AE3-5522537AD0B0}
+	EndGlobalSection
+EndGlobal
