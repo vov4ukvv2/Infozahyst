@@ -8,7 +8,7 @@ class Program
 {
     static void Main(string[] args)
     {
-        //var summary = BenchmarkRunner.Run<BenchmarkProgram>();    uncomment this code if you want to run Benchmark
+        var summary = BenchmarkRunner.Run<BenchmarkProgram>();
         var server = new NetSdrServer();
         Thread serverThread = new Thread(server.Start);
         serverThread.Start();

@@ -1,35 +1,33 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Infozahyst
 {
     public class ControlItemManager
     {
-        private List<byte> supportedControlItems;
+        private HashSet<byte> supportedControlItems;
 
         public ControlItemManager()
         {
-            supportedControlItems = new List<byte>();
+            supportedControlItems = new HashSet<byte>();
         }
+
         public void AddSupportedControlItem(byte controlItem)
         {
-            if (!supportedControlItems.Contains(controlItem))
+            if (supportedControlItems.Add(controlItem))
             {
-                supportedControlItems.Add(controlItem);
                 Console.WriteLine($"Control Item {controlItem} added to supported list.");
             }
         }
+
         public void RemoveControlItem(byte controlItem)
         {
-            if (supportedControlItems.Contains(controlItem))
+            if (supportedControlItems.Remove(controlItem))
             {
-                supportedControlItems.Remove(controlItem);
                 Console.WriteLine($"Control Item {controlItem} removed from supported list.");
             }
         }
+
         public void RemoveUnsupportedControlItems()
         {
             supportedControlItems.Clear();
@@ -38,16 +36,15 @@ namespace Infozahyst
 
         public void MarkControlItemAsAcked(byte dataItem)
         {
-            if (!supportedControlItems.Contains(dataItem))
+            if (supportedControlItems.Add(dataItem))
             {
-                supportedControlItems.Add(dataItem);
                 Console.WriteLine($"Data Item {dataItem} marked as ACK'd.");
             }
         }
 
-        public List<byte> GetSupportedControlItems()
+        public HashSet<byte> GetSupportedControlItems()
         {
-            return supportedControlItems;
+            return new HashSet<byte>(supportedControlItems);
         }
     }
 }

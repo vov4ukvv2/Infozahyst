@@ -2,7 +2,9 @@
 using System.Net;
 using System.Net.Sockets;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
+using System.IO;
 
 namespace Infozahyst
 {
@@ -25,9 +27,14 @@ namespace Infozahyst
             udpMessageProcessor = new UdpMessageProcessor(controlItemManager);
         }
 
+        private bool IsConnected()
+        {
+            return _tcpClient != null && _tcpClient.Connected;
+        }
+
         public void Connect()
         {
-            if (_tcpClient != null && _tcpClient.Connected)
+            if (IsConnected())
             {
                 Console.WriteLine("Already connected.");
                 return;
@@ -46,7 +53,7 @@ namespace Infozahyst
 
         public void Disconnect()
         {
-            if (_tcpClient == null || !_tcpClient.Connected)
+            if (!IsConnected())
             {
                 Console.WriteLine("No active connection.");
                 return;
@@ -64,11 +71,12 @@ namespace Infozahyst
 
         public void ControlReceiverState(bool start)
         {
-            if (_tcpClient == null || !_tcpClient.Connected)
+            if (!IsConnected())
             {
                 Console.WriteLine("No active connection.");
                 return;
             }
+
             try
             {
                 byte[] command;
@@ -81,22 +89,23 @@ namespace Infozahyst
                 else
                 {
                     command = new byte[] { 0x08, 0x00, 0x18, 0x00, 0x00, 0x01, 0x00, 0x00 };
-                    Console.WriteLine("Stopping Dana's capture...");
+                    Console.WriteLine("Stopping Data's capture...");
                 }
+
                 var networkStream = _tcpClient.GetStream();
                 networkStream.Write(command, 0, command.Length);
                 networkStream.Flush();
                 Console.WriteLine("Command sent to NetSDR.");
+
+                if (start)
+                    StartReceivingUdpData();
+                else
+                    StopReceivingUdpData();
             }
             catch (Exception ex)
             {
                 Console.WriteLine($"Error when managing the receiver state: {ex.Message}");
             }
-
-            if (start)
-                StartReceivingUdpData();
-            else
-                StopReceivingUdpData();
         }
 
         public void SetReceiverFrequency()
@@ -107,7 +116,7 @@ namespace Infozahyst
             double frequencyMHz = Convert.ToDouble(Console.ReadLine());
             ulong frequency = (ulong)(frequencyMHz * 1000000);
 
-            if (_tcpClient == null || !_tcpClient.Connected)
+            if (!IsConnected())
             {
                 Console.WriteLine("No active connection.");
                 return;
@@ -120,6 +129,7 @@ namespace Infozahyst
                     Console.WriteLine("The frequency is too high.");
                     return;
                 }
+
                 byte[] frequencyBytes = BitConverter.GetBytes(frequency);
                 Array.Reverse(frequencyBytes);
                 int length = frequencyBytes.Length + 6;
@@ -129,10 +139,12 @@ namespace Infozahyst
                 command[2] = 0x20;
                 command[3] = 0x00;
                 command[4] = channelId;
+
                 for (int i = 0; i < frequencyBytes.Length; i++)
                 {
                     command[5 + i] = frequencyBytes[i];
                 }
+
                 Console.WriteLine($"Sending a command to change the frequency to {frequency / 1000000.0} MHz...");
                 var networkStream = _tcpClient.GetStream();
                 networkStream.Write(command, 0, command.Length);
@@ -152,6 +164,7 @@ namespace Infozahyst
                 Console.WriteLine("Already receiving UDP data.");
                 return;
             }
+
             isReceivingUdpData = true;
             cancellationTokenSource = new CancellationTokenSource();
             udpClient = new UdpClient(60000);
@@ -165,6 +178,7 @@ namespace Infozahyst
                 Console.WriteLine("UDP receiving is not active.");
                 return;
             }
+
             isReceivingUdpData = false;
             cancellationTokenSource.Cancel();
             udpClient.Close();
@@ -181,10 +195,12 @@ namespace Infozahyst
                     {
                         if (token.IsCancellationRequested)
                             break;
+
                         IPEndPoint remoteEndPoint = new IPEndPoint(IPAddress.Any, 60000);
                         try
                         {
                             byte[] packet = udpClient.Receive(ref remoteEndPoint);
+
                             if (packet.Length >= 2)
                             {
                                 if (packet[0] == 0x04 && (packet[1] == 0x84 || packet[1] == 0x82))
@@ -204,6 +220,7 @@ namespace Infozahyst
                         {
                             if (token.IsCancellationRequested)
                                 break;
+
                             Console.WriteLine($"Socket error: {ex.Message}");
                         }
                     }
